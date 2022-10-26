@@ -42,7 +42,7 @@ def peopleDelete(People):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-            DELETE FROM people WHERE itemID = {People}
+            DELETE FROM people WHERE ID = {People}
         """)
     con.commit()
     results = cur.fetchall()
@@ -70,7 +70,7 @@ def peopleModify(valuePeopleID):
                 mobileNo = {valuePeopleID[9]},
                 gstNo = {valuePeopleID[10]},
                 dlNo = {valuePeopleID[11]}
-            WHERE itemID = {valuePeopleID[0]}
+            WHERE ID = {valuePeopleID[0]}
         """
     )
     cur.commit()

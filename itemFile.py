@@ -29,7 +29,7 @@ def itemAdder(list):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-        INSERT INTO item values ({list})
+        INSERT INTO item values {list}
     """)
     con.commit()
     results = cur.fetchall()
@@ -60,17 +60,16 @@ def itemModify(valueItemID):
             SET
                 itemID = {valueItemID[0]},
                 itemName = {valueItemID[1]},
-                itemCategory =  {valueItemID[2]},
+                itemCategory = {valueItemID[2]},
                 company = {valueItemID[3]},
-                compositio = {valueItemID[4]},
+                composition = {valueItemID[4]},
                 rate = {valueItemID[5]},
-                stockist = {valueItemID[6]},
-                retailPrice = {valueItemID[7]},
-                mrp = {valueItemID[8]},
-                packing = {valueItemID[9]},
-                batchNo = {valueItemID[10]},
-                expiryDate = {valueItemID[11]},
-                manufacturingDate = {valueItemID[12]}
+                retailPrice = {valueItemID[6]},
+                mrp = {valueItemID[7]},
+                packing = {valueItemID[8]},
+                batchNo = {valueItemID[9]},
+                expiryDate = {valueItemID[10]},
+                manufacturingDate = {valueItemID[11]}
             WHERE itemID = {valueItemID[0]}
         """
     )
@@ -79,3 +78,18 @@ def itemModify(valueItemID):
     cur.close()
     con.close()
     return results
+
+
+itemAdder((
+    12,                                     # itemID
+    "Meds",                                 # itemName
+    "C",                                    # itemCategory
+    "TheCompany",                           # company
+    "Something",                            # composition
+    10.0,                                   # stockist
+    12.0,                                   # retailPrice
+    12.0,                                   # mrp
+    886275,                                 # packing
+    888289,                                 # batchNo
+    "20220808",                             # expiryDate
+    "20220808"))                            # manufacturingDate

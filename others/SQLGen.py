@@ -24,22 +24,45 @@ def checker():  # -----> if SQL_Project exists: True or False
 def itemFileRunner(check):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
+    # if not check:
+    cur.execute('''
+        CREATE table item (
+            itemID int primary key,                                     /*  0   */
+            itemName varchar(50),                                       /*  1   */
+            itemCategory varchar(1),                                    /*  2   */
+            company varchar(50),                                        /*  3   */
+            composition text,                                           /*  4   */
+            stockist decimal(8,2),                                      /*  5   */
+            retailPrice decimal(8,2),                                   /*  6   */
+            mrp decimal(8,2),                                           /*  7   */
+            packing varchar(10),                                        /*  8   */
+            batchNo int,                                                /*  9   */
+            expiryDate date,                                            /* 10   */
+            manufacturingDate date                                      /* 11   */
+        )
+    ''')
+    con.commit()
+    return True
+
+
+def peopleListRunner(check):
+    con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
+    cur = con.cursor()
     if not check:
         cur.execute('''
-            CREATE table item (
-                itemID int,
-                itemName varchar(50),
-                itemCategory varchar(1),
-                company varchar(50),
-                composition text,
-                rate decimal,
-                stockist decimal,
-                retailPrice decimal,
-                mrp decimal,
-                packing varchar(10),
-                batchNo int,
-                expiryDate date,
-                manufacturingDate date
+            CREATE table people (
+                ID int primary key,
+                pName varchar(50),
+                pCategory varchar(1),
+                contactPerson int,
+                address varchar(50),
+                city varchar(50),
+                pinCode int,
+                proprietor varchar(15),
+                phoneNo int,
+                mobileNo int,
+                gstNo int,
+                dlNo int
             )
         ''')
         con.commit()
@@ -53,7 +76,12 @@ def reset():
         cur.execute("""
             DROP DATABASE SQL_Project
         """)
-        cur.commit()
+        con.commit()
     cur.execute("""
         CREATE DATABASE SQL_Project
     """)
+
+
+reset()
+itemFileRunner(lambda: checker())
+    
