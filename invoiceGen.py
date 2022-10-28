@@ -2,7 +2,7 @@
 import csv
 
 
-# GLobal Variables
+# Global Variables
 
 # Functions
 def invoiceGen():

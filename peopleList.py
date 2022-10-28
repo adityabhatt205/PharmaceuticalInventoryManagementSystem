@@ -9,6 +9,7 @@ sql_auth_plugin = "mysql_native_password"
 
 
 # Functions
+# noinspection SqlResolve
 def peopleSearch(criteria='peopleNo', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
@@ -25,11 +26,12 @@ def peopleSearch(criteria='peopleNo', value='0'):
     return results
 
 
-def peopleAdder(list):
+# noinspection SqlResolve
+def peopleAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-        INSERT INTO people values ({list})
+        INSERT INTO people values ({infoList})
     """)
     con.commit()
     results = cur.fetchall()
@@ -38,6 +40,7 @@ def peopleAdder(list):
     return results
 
 
+# noinspection SqlResolve
 def peopleDelete(People):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
@@ -54,6 +57,7 @@ def peopleDelete(People):
 def peopleModify(valuePeopleID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
+    # noinspection SqlResolve
     cur.execute(
         f"""
             UPDATE people

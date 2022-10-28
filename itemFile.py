@@ -9,6 +9,7 @@ sql_auth_plugin = "mysql_native_password"
 
 
 # Functions
+# noinspection SqlResolve
 def itemSearch(criteria='itemNo', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
@@ -25,19 +26,19 @@ def itemSearch(criteria='itemNo', value='0'):
     return results
 
 
-def itemAdder(list):
+# noinspection SqlResolve
+def itemAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-        INSERT INTO item values {list}
+        INSERT INTO item values {infoList}
     """)
     con.commit()
-    results = cur.fetchall()
     cur.close()
     con.close()
-    return results
 
 
+# noinspection SqlResolve
 def itemDelete(valueItemID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
@@ -51,6 +52,7 @@ def itemDelete(valueItemID):
     return results
 
 
+# noinspection SqlResolve
 def itemModify(valueItemID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
@@ -81,15 +83,15 @@ def itemModify(valueItemID):
 
 
 itemAdder((
-    12,                                     # itemID
-    "Meds",                                 # itemName
-    "C",                                    # itemCategory
-    "TheCompany",                           # company
-    "Something",                            # composition
-    10.0,                                   # stockist
-    12.0,                                   # retailPrice
-    12.0,                                   # mrp
-    886275,                                 # packing
-    888289,                                 # batchNo
-    "20220808",                             # expiryDate
-    "20220808"))                            # manufacturingDate
+    12,  # itemID
+    "Meds",  # itemName
+    "C",  # itemCategory
+    "TheCompany",  # company
+    "Something",  # composition
+    10.0,  # stockist
+    12.0,  # retailPrice
+    12.0,  # mrp
+    886275,  # packing
+    888289,  # batchNo
+    "20220808",  # expiryDate
+    "20220808"))  # manufacturingDate
