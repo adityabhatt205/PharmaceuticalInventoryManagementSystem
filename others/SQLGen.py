@@ -21,10 +21,9 @@ def checker():  # -----> if SQL_Project exists: True or False
         return False
 
 
-def itemFileRunner(check):
+def itemFileRunner():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    # if not check:
     cur.execute('''
         CREATE table item (
             itemID int primary key,                                     /*  0   */
@@ -51,18 +50,18 @@ def peopleListRunner(check):
     if not check:
         cur.execute('''
             CREATE table people (
-                ID int primary key,
-                pName varchar(50),
-                pCategory varchar(1),
-                contactPerson int,
-                address varchar(50),
-                city varchar(50),
-                pinCode int,
-                proprietor varchar(15),
-                phoneNo int,
-                mobileNo int,
-                gstNo int,
-                dlNo int
+                ID int primary key,                                     /*  0   */
+                pName varchar(50),                                      /*  1   */
+                pCategory varchar(1),                                   /*  2   */
+                contactPerson int,                                      /*  3   */
+                address varchar(50),                                    /*  4   */
+                city varchar(50),                                       /*  5   */
+                pinCode int,                                            /*  6   */
+                proprietor varchar(15),                                 /*  7   */
+                phoneNo int,                                            /*  8   */
+                mobileNo int,                                           /*  9   */
+                gstN int,                                               /* 10   */
+                dlNo int                                                /* 11   */
             )
         ''')
         con.commit()
@@ -83,5 +82,5 @@ def reset():
 
 
 reset()
-itemFileRunner(lambda: checker())
-    
+checker()
+itemFileRunner()
