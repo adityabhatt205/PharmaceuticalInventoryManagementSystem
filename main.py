@@ -2,7 +2,7 @@
 
 # import
 import tkinter as gui
-from tkinter import Frame, filedialog
+from tkinter import Frame, filedialog, ttk
 # import mysql.connector as sql
 # import os
 from others.SQLGen import *
@@ -21,6 +21,10 @@ root = gui.Tk()
 
 
 # functions
+def about():
+    open(r"others\open.txt")
+
+
 def mainPage():
     global root
     root.destroy()
@@ -37,11 +41,11 @@ def mainPage():
     fileMenu.add_command(label='Exit', command=root.quit)
     helpMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
     menu.add_cascade(label='Help', menu=helpMenu)
-    helpMenu.add_command(label='About')
+    helpMenu.add_command(label='About', command=about)
     gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0, columnspan=3)
     gui.Button(frm, text="Item", command=insertItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
     gui.Button(frm, text="Firm", command=peopleAdder, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
-    gui.Button(frm, text="Kilo", command=item, bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
+    gui.Button(frm, text="3rd option", command=item, bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
     # noinspection PyTypeChecker
     root.resizable(0, 0)
     root.mainloop()
@@ -237,4 +241,4 @@ def peopleAdder():
 
 
 # main
-peopleAdder()
+mainPage()
