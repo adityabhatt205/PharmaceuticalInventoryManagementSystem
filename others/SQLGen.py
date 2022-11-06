@@ -82,5 +82,6 @@ def reset():
 
 
 reset()
-checker()
+# checker()
 itemFileRunner()
+peopleListRunner(False)

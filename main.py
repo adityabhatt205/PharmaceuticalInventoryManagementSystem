@@ -3,12 +3,14 @@
 # import
 import tkinter as gui
 from tkinter import Frame, filedialog, ttk
-# import mysql.connector as sql
-# import os
+import mysql.connector as sql
+import os
 from others.SQLGen import *
+from others.authCheck import *
 from itemFile import *
 from peopleList import *
 import Export_Item
+from PIL import ImageTk, Image
 
 # variables
 mainMessage = "Welcome to the Pharmaceutical Inventory Management System!"
@@ -16,6 +18,7 @@ mainItem = "Item File"
 gui_bgColor = '#262626'
 gui_fgColor = '#9999ff'
 gui_FontStyle = "Palatino"
+geometry = "1920x1080"
 
 root = gui.Tk()
 
@@ -25,14 +28,55 @@ def about():
     open(r"others\open.txt")
 
 
+def startPage():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.geometry("1280x720")
+    root.resizable(False, False)
+    imageFrame = gui.Frame(root, width=1280, height=720, borderwidth=0)
+    imageFrame.grid(column=3, row=0)
+    homeImage = ImageTk.PhotoImage(Image.open(r"C:\Users\adity\Desktop\pyProjectOnPyCharm\others\Assets\HomePic01.jpg"))
+    gui.Label(image=homeImage, borderwidth=0).grid(row=0, column=0)
+
+    authPage = gui.Toplevel()
+    authFrame = gui.Frame(authPage, width=450, height=120, bg=gui_bgColor, borderwidth=0)
+    authFrame.pack()
+    gui.Label(authFrame, text="User ID", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
+                                                                                                  column=0,
+                                                                                                  sticky="w")
+    gui.Label(authFrame, text="Password", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=1,
+                                                                                                   column=0,
+                                                                                                   sticky="w")
+    userID_val = gui.Entry(authFrame, bg=gui_bgColor, fg=gui_fgColor, width=30)
+    userID_val.grid(row=0, column=1)
+    userPass_val = gui.Entry(authFrame, bg=gui_bgColor, fg=gui_fgColor, width=30)
+    userPass_val.grid(row=1, column=1)
+    authPage.geometry()
+    buttonList = [
+        userID_val, userPass_val
+    ]
+    gui.Button(authFrame, text="Submit", bg=gui_bgColor, width=25,
+               command=lambda: (authPage.quit(), mainPage()) if authCheck(getFields(buttonList)) == True
+               else gui.Label(authFrame, text="Incorrect Credentials", bg=gui_bgColor, fg="red")
+               .grid(row=3, columnspan=2),
+               fg=gui_fgColor).grid(row=2, column=0, pady=2)
+    gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor,
+               fg=gui_fgColor).grid(row=2, column=1, pady=2)
+    authPage.resizable(False, False)
+    authPage.mainloop()
+    root.mainloop()
+
+
 def mainPage():
     global root
     root.destroy()
     root = gui.Tk()
+    # root.geometry(geometry)
     frm = gui.Frame(root, bg=gui_bgColor)
     frm.grid(row=0, column=0)
     menu = gui.Menu(root, bg=gui_bgColor, fg=gui_fgColor)
-    root.config(menu=menu)
+    root.config(menu=menu, bg=gui_bgColor)
     fileMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
     menu.add_cascade(label="File", menu=fileMenu)
     fileMenu.add_command(label='New')
@@ -72,13 +116,17 @@ def freshStarter():
 
 def clearFields(a):
     for i in a:
-        i.delete(0, gui.END)
+        if not(type(i) == gui.StringVar()):
+            i.delete(0, gui.END)
 
 
 def getFields(a):
     l = []
     for i in a:
+        if type(i) == gui.StringVar():
+            l.append(i)
         l.append(i.get())
+    print(l)
     return tuple(l)
 
 
@@ -87,7 +135,7 @@ def insertItem():
     root.destroy()
     root = gui.Tk()
     root.title("Item: Adding New Records")
-    root.geometry("295x435")
+    # root.geometry(geometry)
     rootFrame = gui.Frame(root, bg=gui_bgColor)
     rootFrame.grid(row=0, column=0)
     gui.Label(rootFrame, text="Add New Item", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0, column=0,
@@ -122,8 +170,10 @@ def insertItem():
     itemID_val.grid(row=1, column=1, pady=5)
     itemName_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     itemName_val.grid(row=2, column=1, pady=5)
-    itemCategory_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    itemCategory_val.grid(row=3, column=1, pady=5)
+    itemCategory_val_d = gui.StringVar()
+    itemCategory_val_dropdown = gui.OptionMenu(rootFrame, itemCategory_val_d, "I", "C", "T")
+    itemCategory_val_dropdown.config(bg=gui_bgColor, fg=gui_fgColor, borderwidth=0, width=15)
+    itemCategory_val_dropdown.grid(row=3, column=1, pady=5)
     company_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     company_val.grid(row=4, column=1, pady=5)
     composition_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
@@ -143,7 +193,7 @@ def insertItem():
     manufacturingDate_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     manufacturingDate_val.grid(row=12, column=1, pady=5)
     buttonList = (
-        itemID_val, itemName_val, itemCategory_val, company_val, composition_val, stockist_val, retailPrice_val,
+        itemID_val, itemName_val, itemCategory_val_d, company_val, composition_val, stockist_val, retailPrice_val,
         MRP_val,
         packing_val, batchNo_val, expiryDate_val, manufacturingDate_val)
     gui.Button(rootFrame, text="Add Item", command=lambda: (itemAdder(getFields(buttonList)), clearFields(buttonList)),
@@ -165,7 +215,7 @@ def peopleAdder():
     root.destroy()
     root = gui.Tk()
     root.title("People: Adding New Records")
-    root.geometry("295x435")
+    root.geometry(geometry)
     rootFrame = gui.Frame(root, bg=gui_bgColor)
     rootFrame.grid(row=0, column=0)
     gui.Label(rootFrame, text="Add New People", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
@@ -227,10 +277,11 @@ def peopleAdder():
         proprietor_val,
         phoneNo_val, mobileNo_val, gstNo_val, dlNo_val)
     gui.Button(rootFrame, text="Add People", command=lambda: (peopleAdder(buttonList), clearFields(buttonList)),
-               bg=gui_bgColor, fg=gui_fgColor).grid(
-        row=14, column=0, pady=2)
+               bg=gui_bgColor, fg=gui_fgColor)\
+        .grid(row=14, column=0, pady=2)
     gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor,
-               fg=gui_fgColor).grid(row=14, column=1, pady=2)
+               fg=gui_fgColor)\
+        .grid(row=14, column=1, pady=2)
     gui.Button(rootFrame, text="Return", bg=gui_bgColor, fg=gui_fgColor, command=mainPage).grid(row=15,
                                                                                                 column=0,
                                                                                                 columnspan=2,
@@ -241,4 +292,4 @@ def peopleAdder():
 
 
 # main
-mainPage()
+startPage()
