@@ -16,7 +16,9 @@ from PIL import ImageTk, Image
 mainMessage = "Welcome to the Pharmaceutical Inventory Management System!"
 mainItem = "Item File"
 gui_bgColor = '#262626'
-gui_fgColor = '#9999ff'
+gui_bgColor2 = '#202121'
+gui_fgColor = '#7a95ff'  # #9999ff
+gui_fgColor2 = '#99e9ff'
 gui_FontStyle = "Palatino"
 root = gui.Tk()
 geometry = f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}+" \
@@ -27,6 +29,21 @@ incorrectAttempts = 0
 # functions
 def about():
     open(r"others\open.txt")
+
+
+def clearFields(a):
+    for i in a:
+        if type(i) != gui.StringVar:
+            i.delete(0, gui.END)
+
+
+def getFields(a):
+    l = []
+    for i in a:
+        if type(i) == gui.StringVar():
+            l.append(i)
+        l.append(i.get())
+    return tuple(l)
 
 
 def startPage():
@@ -44,35 +61,37 @@ def startPage():
     gui.Label(image=homeImage, borderwidth=0).grid(row=0, column=0)
 
     authPage = gui.Toplevel()
+    authPage.config(bg=gui_bgColor)
     authPage.geometry(
-        f"370x100+{int((root.winfo_screenwidth() / 2) - 640)}+{int((root.winfo_screenheight() / 2) - 360)}")
+        f"370x130+{int((root.winfo_screenwidth() / 2) - 640)}+{int((root.winfo_screenheight() / 2) - 360)}")
     authPage.title("Log In")
     authFrame = gui.Frame(authPage, width=450, height=120, bg=gui_bgColor, borderwidth=0)
     authFrame.pack()
-
     gui.Label(authFrame, text="User ID", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
                                                                                                   column=0,
                                                                                                   sticky="w")
     gui.Label(authFrame, text="Password", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=1,
                                                                                                    column=0,
                                                                                                    sticky="w")
-    userID_val = gui.Entry(authFrame, bg=gui_bgColor, fg=gui_fgColor, width=30)
+    userID_val = gui.Entry(authFrame, bg=gui_bgColor2, fg=gui_fgColor2, width=30)
     userID_val.grid(row=0, column=1)
-    userPass_val = gui.Entry(authFrame, bg=gui_bgColor, fg=gui_fgColor, width=30)
+    userPass_val = gui.Entry(authFrame, show="*", bg=gui_bgColor2, fg=gui_fgColor2, width=30)
     userPass_val.grid(row=1, column=1)
 
     buttonList = [
         userID_val, userPass_val
     ]
     check = gui.Label(authFrame, text="", bg=gui_bgColor, fg="red")
-    check.grid(row=3, columnspan=2)
+    check.grid(row=4, columnspan=2)
 
-    gui.Button(authFrame, text="Submit", bg=gui_bgColor, width=25,
+    gui.Button(authFrame, text="Submit", bg=gui_bgColor2, width=25,
                command=lambda: (authPage.quit(), mainPage()) if authCheck(getFields(buttonList)) == True
                else print(getFields(buttonList)) if getFields(buttonList) == ('', '') else (incorrectCred(check, root)),
-               fg=gui_fgColor).grid(row=2, column=0, pady=2)
-    gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor,
-               fg=gui_fgColor).grid(row=2, column=1, pady=2)
+               fg=gui_fgColor2).grid(row=2, column=0, pady=2)
+    gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor2,
+               fg=gui_fgColor2).grid(row=2, column=1, pady=2)
+    gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor2,
+               fg=gui_fgColor2).grid(row=3, column=0, columnspan=2, pady=0)
     authPage.resizable(False, False)
     root.mainloop()
     authPage.mainloop()
@@ -110,11 +129,11 @@ def mainPage():
     root.title("Main Page")
     gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor, font=(gui_FontStyle, 20)) \
         .grid(column=0, row=0, columnspan=3, sticky="s")
-    gui.Button(frm, text="Item", command=item, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+    gui.Button(frm, text="Item", command=item, bg=gui_bgColor2, fg=gui_fgColor2, width=10). \
         grid(column=0, row=1)
-    gui.Button(frm, text="Firm", command=peopleAdder, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+    gui.Button(frm, text="Firm", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=10). \
         grid(column=1, row=1)
-    gui.Button(frm, text="Log Out", command=startPage, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+    gui.Button(frm, text="Log Out", command=startPage, bg=gui_bgColor2, fg=gui_fgColor2, width=10). \
         grid(column=2, row=1)
     # noinspection PyTypeChecker
     root.resizable(0, 0)
@@ -132,28 +151,10 @@ def item():
     frm.pack()
     gui.Label(frm, text="Item File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0,
                                                                                                       columnspan=3)
-    gui.Button(frm, text="Insert", command=insertItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
-    gui.Button(frm, text="Search", command=searchItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
-    gui.Button(frm, text="Modify", command=item, bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
-    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=3)
-    root.mainloop()
-
-
-def firm():
-    global root
-    root.destroy()
-    root = gui.Tk()
-    root.config(bg=gui_bgColor)
-    root.title("Firm")
-    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
-    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
-    frm.pack()
-    gui.Label(frm, text="Firm File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0,
-                                                                                                      columnspan=3)
-    gui.Button(frm, text="Insert", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
-    gui.Button(frm, text="Search", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
-    gui.Button(frm, text="Modify", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
-    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=3)
+    gui.Button(frm, text="Insert", command=insertItem, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command=searchItem, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command=item, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=3)
     root.mainloop()
 
 
@@ -239,13 +240,24 @@ def insertItem():
 
 
 def searchItemOutput(criteria, value, frame):
-    s = ''
-    for i in itemSearch(criteria=criteria.get(), value=getFields([value])[0]):
-        for j in i:
-            s += str(j)
-            s += '\t'
-        s += '\n'
-    return s
+    for oldResults in frame.winfo_children():
+        oldResults.destroy()
+    data = itemSearch(criteria=criteria.get(), value=getFields([value])[0])
+    frame.config(bg=gui_bgColor)
+    k = 0
+    width_list = [
+        3, 25, 2, 25, 50, 15, 15, 15, 15, 10, 20, 20,
+    ]
+    orientation_list = [
+        "right", "left", "left", "left", "left", "right", "right", "right", "right", "right", "right", "right"
+    ]
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            e = gui.Entry(frame)
+            e.config(bg=gui_bgColor2, fg=gui_fgColor2, width=width_list[j], justify=orientation_list[j])
+            e.grid(row=i, column=j, sticky="w")
+            e.insert(k, data[i][j])
+            k += 1
 
 
 def searchItem():
@@ -254,6 +266,9 @@ def searchItem():
     root = gui.Tk()
     root.title("Item: Searching Records")
     root.config(bg=gui_bgColor)
+    root.geometry(f"{1350}x{int(root.winfo_screenheight() / 2)}+"
+                  f"{int((root.winfo_screenwidth() / 2) - 1350 / 2)}+{int(root.winfo_screenheight() / 4)}")
+    root.resizable(False, False)
     rootFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
     rootFrame.grid(row=0, column=0)
     gui.Label(rootFrame, text="Search Records", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
@@ -273,29 +288,29 @@ def searchItem():
                         "packing", "batchNo", "expiryDate", "manufacturingDate")
     op.config(width=15, height=1, bg=gui_bgColor, fg=gui_fgColor, borderwidth=0)
     op.grid(row=1, column=1, sticky="e")
-    searchValue = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor, width=21)
+    searchValue = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2, width=21)
     searchValue.grid(row=2, column=1, sticky="e")
-
     # Result
     resultFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
     resultFrame.grid(row=1, column=0)
-    result = gui.Label(resultFrame, text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
-                                                              frame=resultFrame)), bg=gui_bgColor, fg=gui_fgColor)
-    result.grid(row=5, column=0, pady=2, columnspan=3)
+    searchItemOutput(criteria=itemCriteria, value=searchValue, frame=resultFrame)
+
+    # result = gui.Label(resultFrame, text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
+    #                                                           frame=resultFrame)), bg=gui_bgColor, fg=gui_fgColor)
+    # result.grid(row=5, column=0, pady=2, columnspan=3)
 
     # Search Button
-    gui.Button(rootFrame, text="Search Item", bg=gui_bgColor, fg=gui_fgColor,
-               command=lambda: result.config(text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
-                                                                       frame=resultFrame)))) \
-        .grid(row=3, column=0, pady=2)
+    gui.Button(rootFrame, text="Search Item", bg=gui_bgColor2, fg=gui_fgColor2,
+               command=lambda: searchItemOutput(criteria=itemCriteria, value=searchValue,
+                                                frame=resultFrame)).grid(row=3, column=0, pady=2)
     # Clear Button
-    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields([searchValue]), bg=gui_bgColor,
-               fg=gui_fgColor).grid(row=3, column=1, pady=2)
+    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields([searchValue]), bg=gui_bgColor2,
+               fg=gui_fgColor2).grid(row=3, column=1, pady=2)
     # Return Button
-    gui.Button(rootFrame, text="Return", bg=gui_bgColor, fg=gui_fgColor, command=item).grid(row=4,
-                                                                                            column=0,
-                                                                                            columnspan=2,
-                                                                                            pady=5)
+    gui.Button(rootFrame, text="Return", bg=gui_bgColor2, fg=gui_fgColor2, command=item).grid(row=4,
+                                                                                              column=0,
+                                                                                              columnspan=2,
+                                                                                              pady=5)
     root.mainloop()
 
 
@@ -308,28 +323,32 @@ def freshStarter():
     root.mainloop()
 
 
-def clearFields(a):
-    for i in a:
-        if not (type(i) == gui.StringVar()):
-            i.delete(0, gui.END)
-
-
-def getFields(a):
-    l = []
-    for i in a:
-        if type(i) == gui.StringVar():
-            l.append(i)
-        l.append(i.get())
-    return tuple(l)
-
-
-def peopleAdder():
+def firm():
     global root
     root.destroy()
     root = gui.Tk()
     root.config(bg=gui_bgColor)
+    root.title("Firm")
+    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
+    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
+    frm.pack()
+    gui.Label(frm, text="Firm File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0,
+                                                                                                      columnspan=3)
+    gui.Button(frm, text="Insert", command=insertFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command=searchFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command="", bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=3)
+    root.mainloop()
+
+
+# noinspection PyTypeChecker
+def insertFirm():
+    global root
+    root.destroy()
+    root = gui.Tk()
     root.title("People: Adding New Records")
-    root.geometry(geometry)
+    root.config(bg=gui_bgColor)
+    # root.geometry(geometry)
     rootFrame = gui.Frame(root, bg=gui_bgColor)
     rootFrame.grid(row=0, column=0)
     gui.Label(rootFrame, text="Add New People", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
@@ -362,48 +381,120 @@ def peopleAdder():
     gui.Label(rootFrame, text="DL No", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=12,
                                                                                                 column=0,
                                                                                                 sticky="w")
-    pID_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pID_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     pID_val.grid(row=1, column=1, pady=5)
-    pName_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pName_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     pName_val.grid(row=2, column=1, pady=5)
-    pCategory_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    pCategory_val.grid(row=3, column=1, pady=5)
-    contactPerson_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pCategory_val_d = gui.StringVar()
+    pCategory_val_d.set("C")
+    pCategory_val_dropdown = gui.OptionMenu(rootFrame, pCategory_val_d, "S", "C")
+    pCategory_val_dropdown.config(bg=gui_bgColor2, fg=gui_fgColor2, borderwidth=0, width=15)
+    pCategory_val_dropdown.grid(row=3, column=1, pady=5)
+    contactPerson_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     contactPerson_val.grid(row=4, column=1, pady=5)
-    pAddress_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pAddress_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     pAddress_val.grid(row=5, column=1, pady=5)
-    pCity_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pCity_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     pCity_val.grid(row=6, column=1, pady=5)
-    pinCode_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    pinCode_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     pinCode_val.grid(row=7, column=1, pady=5)
-    proprietor_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    proprietor_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     proprietor_val.grid(row=8, column=1, pady=5)
-    phoneNo_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    phoneNo_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     phoneNo_val.grid(row=9, column=1, pady=5)
-    mobileNo_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    mobileNo_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     mobileNo_val.grid(row=10, column=1, pady=5)
-    gstNo_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    gstNo_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     gstNo_val.grid(row=11, column=1, pady=5)
-    dlNo_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    dlNo_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
     dlNo_val.grid(row=12, column=1, pady=5)
     buttonList = (
-        pID_val, pName_val, pCategory_val, contactPerson_val, pAddress_val, pCity_val, pinCode_val,
-        proprietor_val,
-        phoneNo_val, mobileNo_val, gstNo_val, dlNo_val)
-    gui.Button(rootFrame, text="Add People", command=lambda: (peopleAdder(buttonList), clearFields(buttonList)),
-               bg=gui_bgColor, fg=gui_fgColor) \
+        pID_val, pName_val, pCategory_val_d, contactPerson_val, pAddress_val, pCity_val, pinCode_val,
+        proprietor_val, phoneNo_val, mobileNo_val, gstNo_val, dlNo_val)
+    gui.Button(rootFrame, text="Add People", command=lambda: (peopleAdder(getFields(buttonList)), clearFields(buttonList)),
+               bg=gui_bgColor2, fg=gui_fgColor2) \
         .grid(row=14, column=0, pady=2)
-    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor,
-               fg=gui_fgColor) \
+    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor2,
+               fg=gui_fgColor2) \
         .grid(row=14, column=1, pady=2)
-    gui.Button(rootFrame, text="Return", bg=gui_bgColor, fg=gui_fgColor, command=mainPage).grid(row=15,
-                                                                                                column=0,
-                                                                                                columnspan=2,
-                                                                                                pady=5)
-    # noinspection PyTypeChecker
+    gui.Button(rootFrame, text="Return", bg=gui_bgColor2, fg=gui_fgColor2, command=mainPage).grid(row=15,
+                                                                                                  column=0,
+                                                                                                  columnspan=2,
+                                                                                                  pady=5)
     root.resizable(0, 0)
     root.mainloop()
 
 
+def searchFirmOutput(criteria, value, frame):
+    for oldResults in frame.winfo_children():
+        oldResults.destroy()
+    data = firmSearch(criteria=criteria.get(), value=getFields([value])[0])
+    frame.config(bg=gui_bgColor)
+    k = 0
+    width_list = [
+        3, 30, 2, 15, 30, 15, 10, 15, 15, 15, 20, 20,
+    ]
+    orientation_list = [
+        "right", "left", "left", "left", "left", "right", "right", "right", "right", "right", "right", "right"
+    ]
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            e = gui.Entry(frame)
+            e.config(bg=gui_bgColor2, fg=gui_fgColor2, width=width_list[j], justify=orientation_list[j])
+            e.grid(row=i, column=j, sticky="w")
+            e.insert(k, data[i][j])
+            k += 1
+
+
+def searchFirm():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.title("Firm: Searching Records")
+    root.config(bg=gui_bgColor)
+    root.geometry(f"{1350}x{int(root.winfo_screenheight() / 2)}+"
+                  f"{int((root.winfo_screenwidth() / 2) - 1350 / 2)}+{int(root.winfo_screenheight() / 4)}")
+    root.resizable(False, False)
+    rootFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    rootFrame.grid(row=0, column=0)
+    gui.Label(rootFrame, text="Search Records", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
+                                                                                                         column=0,
+                                                                                                         columnspan=3,
+                                                                                                         padx=100)
+    gui.Label(rootFrame, text="Field To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=1,
+                                                                                                          column=0,
+                                                                                                          sticky="w")
+    gui.Label(rootFrame, text="Value To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=2,
+                                                                                                          column=0,
+                                                                                                          sticky="w")
+    itemCriteria = gui.StringVar()
+    itemCriteria.set("FirmID")
+    op = gui.OptionMenu(rootFrame, itemCriteria, "FirmID", "SCName", "SCCategory", "contactPerson", "address",
+                        "city", "pinCode", "proprietor", "phoneNo", "mobileNo", "gstN", "dlNo")
+    op.config(width=15, height=1, bg=gui_bgColor, fg=gui_fgColor, borderwidth=0)
+    op.grid(row=1, column=1, sticky="e")
+    searchValue = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2, width=21)
+    searchValue.grid(row=2, column=1, sticky="e")
+
+    # Result
+    resultFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    resultFrame.grid(row=1, column=0)
+    searchFirmOutput(criteria=itemCriteria, value=searchValue, frame=resultFrame)
+
+    # Search Button
+    gui.Button(rootFrame, text="Search Item", bg=gui_bgColor2, fg=gui_fgColor2,
+               command=lambda: searchFirmOutput(criteria=itemCriteria, value=searchValue,
+                                                frame=resultFrame)).grid(row=3, column=0, pady=2)
+    # Clear Button
+    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields([searchValue]), bg=gui_bgColor2,
+               fg=gui_fgColor2).grid(row=3, column=1, pady=2)
+    # Return Button
+    gui.Button(rootFrame, text="Return", bg=gui_bgColor2, fg=gui_fgColor2, command=item).grid(row=4,
+                                                                                              column=0,
+                                                                                              columnspan=2,
+                                                                                              pady=5)
+    root.mainloop()
+
+
 # main
-mainPage()
+startPage()

@@ -33,7 +33,7 @@ def invoiceAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-        INSERT INTO invoice values ({infoList})
+        INSERT INTO invoice values {infoList}
     """)
     con.commit()
     results = cur.fetchall()

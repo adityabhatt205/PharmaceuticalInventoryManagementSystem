@@ -44,7 +44,7 @@ def itemFileRunner():
     return True
 
 
-def invoiceGenRunner(check):
+def firmFileRunner(check):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     if not check:
@@ -52,16 +52,16 @@ def invoiceGenRunner(check):
             CREATE table suppcust (
                 FirmID int primary key,                                 /*  0   */
                 SCName varchar(50),                                     /*  1   */
-                SCCategory varchar(1),                                  /*  2   */    /* Supplier or customer (drop down menu) */
-                contactPerson int,                                      /*  3   */
+                SCCategory varchar(1),                                  /*  2   */    /* Supplier or customer*/
+                contactPerson bigint,                                   /*  3   */
                 address varchar(50),                                    /*  4   */
                 city varchar(50),                                       /*  5   */
                 pinCode int,                                            /*  6   */
                 proprietor varchar(15),                                 /*  7   */
-                phoneNo int,                                            /*  8   */
-                mobileNo int,                                           /*  9   */
-                gstN int,                                               /*  10  */
-                dlNo int                                                /*  11  */
+                phoneNo bigint,                                         /*  8   */
+                mobileNo bigint,                                        /*  9   */
+                gstN bigint,                                            /*  10  */
+                dlNo bigint                                             /*  11  */
             )
         ''')
         con.commit()
@@ -88,14 +88,14 @@ def invoiceGenRunner(check):
         cur.execute('''
             CREATE table invoice (
                 FirmID int,                                               /*  0   */
-                Firmname varchar(50),                                     /*  1   */
-                Billno int,                                               /*  2   */
-                Billdate date,                                            /*  3   */
-                Itemname varchar(50),                                     /*  4   */
-                Itemtype varchar(50),                                     /*  5   */
-                Batchno int,                                              /*  6   */
+                FirmName varchar(50),                                     /*  1   */
+                BillNo int,                                               /*  2   */
+                BillDate date,                                            /*  3   */
+                ItemName varchar(50),                                     /*  4   */
+                ItemType varchar(50),                                     /*  5   */
+                BatchNo int,                                              /*  6   */
                 Packing varchar(10),                                      /*  7   */
-                Expdate date,                                             /*  8   */
+                expDate date,                                             /*  8   */
                 Qty int,                                                  /*  9   */
                 Rate int,                                                 /*  10  */
                 Total int,                                                /*  11  */
@@ -123,6 +123,7 @@ def stockRegRunner(check):
         ''')
         con.commit()
     return True
+
 
 # reset()
 # checker()

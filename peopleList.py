@@ -10,14 +10,15 @@ sql_auth_plugin = "mysql_native_password"
 
 # Functions
 # noinspection SqlResolve
-def peopleSearch(criteria='peopleNo', value='0'):
+def firmSearch(criteria='FirmID', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     value += '%'
+    value = '%' + value
     cur.execute(
         f"""
-            SELECT * FROM people
-            WHERE {criteria} LIKE {value}
+            SELECT * FROM suppcust
+            WHERE {criteria} LIKE '{value}'
         """
     )
     results = cur.fetchall()
@@ -30,8 +31,9 @@ def peopleSearch(criteria='peopleNo', value='0'):
 def peopleAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
+    print(infoList)
     cur.execute(f"""
-        INSERT INTO people values ({infoList})
+        INSERT INTO suppcust values {infoList}
     """)
     con.commit()
     results = cur.fetchall()
@@ -45,7 +47,7 @@ def peopleDelete(People):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-            DELETE FROM people WHERE ID = {People}
+            DELETE FROM suppcust WHERE ID = {People}
         """)
     con.commit()
     results = cur.fetchall()
@@ -60,7 +62,7 @@ def peopleModify(valuePeopleID):
     # noinspection SqlResolve
     cur.execute(
         f"""
-            UPDATE people
+            UPDATE suppcust
             SET
                 ID = {valuePeopleID[0]},
                 pName = {valuePeopleID[1]},
