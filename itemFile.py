@@ -14,10 +14,11 @@ def itemSearch(criteria='itemNo', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     value += '%'
+    value = '%' + value
     cur.execute(
         f"""
             SELECT * FROM item
-            WHERE {criteria} LIKE {value}
+            WHERE {criteria} LIKE '{value}'
         """
     )
     results = cur.fetchall()
@@ -82,16 +83,16 @@ def itemModify(valueItemID):
     return results
 
 
-itemAdder((
-    12,  # itemID
-    "Meds",  # itemName
-    "C",  # itemCategory
-    "TheCompany",  # company
-    "Something",  # composition
-    10.0,  # stockist
-    12.0,  # retailPrice
-    12.0,  # mrp
-    886275,  # packing
-    888289,  # batchNo
-    "20220808",  # expiryDate
-    "20220808"))  # manufacturingDate
+# itemAdder((
+#     12,  # itemID
+#     "Meds",  # itemName
+#     "C",  # itemCategory
+#     "TheCompany",  # company
+#     "Something",  # composition
+#     10.0,  # stockist
+#     12.0,  # retailPrice
+#     12.0,  # mrp
+#     886275,  # packing
+#     888289,  # batchNo
+#     "20220808",  # expiryDate
+#     "20220808"))  # manufacturingDate

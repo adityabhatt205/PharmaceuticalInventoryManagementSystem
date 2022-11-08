@@ -18,9 +18,10 @@ mainItem = "Item File"
 gui_bgColor = '#262626'
 gui_fgColor = '#9999ff'
 gui_FontStyle = "Palatino"
-geometry = "1920x1080"
-
 root = gui.Tk()
+geometry = f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}+" \
+           f"{int(root.winfo_screenwidth() / 4)}+{int(root.winfo_screenheight() / 4)}"
+incorrectAttempts = 0
 
 
 # functions
@@ -32,16 +33,23 @@ def startPage():
     global root
     root.destroy()
     root = gui.Tk()
-    root.geometry("1280x720")
+    root.geometry(f"1280x720+{int((root.winfo_screenwidth() / 2) - 640)}+{int((root.winfo_screenheight() / 2) - 360)}")
     root.resizable(False, False)
+    root.config(bg=gui_bgColor)
+    root.title("Start Page: Enter credentials to continue")
+
     imageFrame = gui.Frame(root, width=1280, height=720, borderwidth=0)
     imageFrame.grid(column=3, row=0)
     homeImage = ImageTk.PhotoImage(Image.open(r"C:\Users\adity\Desktop\pyProjectOnPyCharm\others\Assets\HomePic01.jpg"))
     gui.Label(image=homeImage, borderwidth=0).grid(row=0, column=0)
 
     authPage = gui.Toplevel()
+    authPage.geometry(
+        f"370x100+{int((root.winfo_screenwidth() / 2) - 640)}+{int((root.winfo_screenheight() / 2) - 360)}")
+    authPage.title("Log In")
     authFrame = gui.Frame(authPage, width=450, height=120, bg=gui_bgColor, borderwidth=0)
     authFrame.pack()
+
     gui.Label(authFrame, text="User ID", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
                                                                                                   column=0,
                                                                                                   sticky="w")
@@ -52,44 +60,62 @@ def startPage():
     userID_val.grid(row=0, column=1)
     userPass_val = gui.Entry(authFrame, bg=gui_bgColor, fg=gui_fgColor, width=30)
     userPass_val.grid(row=1, column=1)
-    authPage.geometry()
+
     buttonList = [
         userID_val, userPass_val
     ]
+    check = gui.Label(authFrame, text="", bg=gui_bgColor, fg="red")
+    check.grid(row=3, columnspan=2)
+
     gui.Button(authFrame, text="Submit", bg=gui_bgColor, width=25,
                command=lambda: (authPage.quit(), mainPage()) if authCheck(getFields(buttonList)) == True
-               else gui.Label(authFrame, text="Incorrect Credentials", bg=gui_bgColor, fg="red")
-               .grid(row=3, columnspan=2),
+               else print(getFields(buttonList)) if getFields(buttonList) == ('', '') else (incorrectCred(check, root)),
                fg=gui_fgColor).grid(row=2, column=0, pady=2)
     gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor,
                fg=gui_fgColor).grid(row=2, column=1, pady=2)
     authPage.resizable(False, False)
-    authPage.mainloop()
     root.mainloop()
+    authPage.mainloop()
+
+
+def incorrectCred(check, page):
+    global incorrectAttempts
+    incorrectAttempts += 1
+    check["text"] = f'Incorrect Credentials! {3 - incorrectAttempts} attempts left'
+    if incorrectAttempts >= 3:
+        page.destroy()
+    return check, incorrectAttempts
 
 
 def mainPage():
     global root
     root.destroy()
     root = gui.Tk()
-    # root.geometry(geometry)
+    root.config(bg=gui_bgColor)
+    root.geometry(geometry)
     frm = gui.Frame(root, bg=gui_bgColor)
     frm.grid(row=0, column=0)
-    menu = gui.Menu(root, bg=gui_bgColor, fg=gui_fgColor)
-    root.config(menu=menu, bg=gui_bgColor)
-    fileMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
-    menu.add_cascade(label="File", menu=fileMenu)
-    fileMenu.add_command(label='New')
-    fileMenu.add_command(label='Open...')
-    fileMenu.add_separator()
-    fileMenu.add_command(label='Exit', command=root.quit)
-    helpMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
-    menu.add_cascade(label='Help', menu=helpMenu)
-    helpMenu.add_command(label='About', command=about)
-    gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0, columnspan=3)
-    gui.Button(frm, text="Item", command=insertItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
-    gui.Button(frm, text="Firm", command=peopleAdder, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
-    gui.Button(frm, text="3rd option", command=item, bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
+
+    # menu = gui.Menu(root, bg=gui_bgColor, fg=gui_fgColor)
+    # root.config(menu=menu, bg=gui_bgColor)
+    # fileMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
+    # menu.add_cascade(label="File", menu=fileMenu)
+    # fileMenu.add_command(label='New')
+    # fileMenu.add_command(label='Open...')
+    # fileMenu.add_separator()
+    # fileMenu.add_command(label='Exit', command=root.quit)
+    # helpMenu = gui.Menu(menu, bg=gui_bgColor, fg=gui_fgColor)
+    # menu.add_cascade(label='Help', menu=helpMenu)
+    # helpMenu.add_command(label='About', command=about)
+    root.title("Main Page")
+    gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor, font=(gui_FontStyle, 20)) \
+        .grid(column=0, row=0, columnspan=3, sticky="s")
+    gui.Button(frm, text="Item", command=item, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+        grid(column=0, row=1)
+    gui.Button(frm, text="Firm", command=peopleAdder, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+        grid(column=1, row=1)
+    gui.Button(frm, text="Log Out", command=startPage, bg=gui_bgColor, fg=gui_fgColor, width=10). \
+        grid(column=2, row=1)
     # noinspection PyTypeChecker
     root.resizable(0, 0)
     root.mainloop()
@@ -99,35 +125,36 @@ def item():
     global root
     root.destroy()
     root = gui.Tk()
-    frm = gui.Frame(root)
+    root.config(bg=gui_bgColor)
+    root.title("Item")
+    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
+    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
     frm.pack()
-    gui.Label(frm, text=mainItem, fg=gui_fgColor, bg=gui_bgColor).grid(row=0, column=0, columnspan=3)
+    gui.Label(frm, text="Item File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0,
+                                                                                                      columnspan=3)
+    gui.Button(frm, text="Insert", command=insertItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command=searchItem, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command=item, bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=3)
     root.mainloop()
 
 
-def freshStarter():
+def firm():
     global root
     root.destroy()
     root = gui.Tk()
-    frm = gui.Frame(root)
+    root.config(bg=gui_bgColor)
+    root.title("Firm")
+    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
+    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
     frm.pack()
+    gui.Label(frm, text="Firm File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=0,
+                                                                                                      columnspan=3)
+    gui.Button(frm, text="Insert", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command="", bg=gui_bgColor, fg=gui_fgColor).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor, fg=gui_fgColor).grid(column=1, row=3)
     root.mainloop()
-
-
-def clearFields(a):
-    for i in a:
-        if not(type(i) == gui.StringVar()):
-            i.delete(0, gui.END)
-
-
-def getFields(a):
-    l = []
-    for i in a:
-        if type(i) == gui.StringVar():
-            l.append(i)
-        l.append(i.get())
-    print(l)
-    return tuple(l)
 
 
 def insertItem():
@@ -135,6 +162,7 @@ def insertItem():
     root.destroy()
     root = gui.Tk()
     root.title("Item: Adding New Records")
+    root.config(bg=gui_bgColor)
     # root.geometry(geometry)
     rootFrame = gui.Frame(root, bg=gui_bgColor)
     rootFrame.grid(row=0, column=0)
@@ -210,10 +238,96 @@ def insertItem():
     root.mainloop()
 
 
+def searchItemOutput(criteria, value, frame):
+    s = ''
+    for i in itemSearch(criteria=criteria.get(), value=getFields([value])[0]):
+        for j in i:
+            s += str(j)
+            s += '\t'
+        s += '\n'
+    return s
+
+
+def searchItem():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.title("Item: Searching Records")
+    root.config(bg=gui_bgColor)
+    rootFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    rootFrame.grid(row=0, column=0)
+    gui.Label(rootFrame, text="Search Records", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
+                                                                                                         column=0,
+                                                                                                         columnspan=3,
+                                                                                                         padx=100)
+    gui.Label(rootFrame, text="Field To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=1,
+                                                                                                          column=0,
+                                                                                                          sticky="w")
+    gui.Label(rootFrame, text="Value To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=2,
+                                                                                                          column=0,
+                                                                                                          sticky="w"
+                                                                                                          )
+    itemCriteria = gui.StringVar()
+    itemCriteria.set("itemID")
+    op = gui.OptionMenu(rootFrame, itemCriteria, "itemID", "itemName", "itemCategory", "company", "composition",
+                        "packing", "batchNo", "expiryDate", "manufacturingDate")
+    op.config(width=15, height=1, bg=gui_bgColor, fg=gui_fgColor, borderwidth=0)
+    op.grid(row=1, column=1, sticky="e")
+    searchValue = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor, width=21)
+    searchValue.grid(row=2, column=1, sticky="e")
+
+    # Result
+    resultFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    resultFrame.grid(row=1, column=0)
+    result = gui.Label(resultFrame, text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
+                                                              frame=resultFrame)), bg=gui_bgColor, fg=gui_fgColor)
+    result.grid(row=5, column=0, pady=2, columnspan=3)
+
+    # Search Button
+    gui.Button(rootFrame, text="Search Item", bg=gui_bgColor, fg=gui_fgColor,
+               command=lambda: result.config(text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
+                                                                       frame=resultFrame)))) \
+        .grid(row=3, column=0, pady=2)
+    # Clear Button
+    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields([searchValue]), bg=gui_bgColor,
+               fg=gui_fgColor).grid(row=3, column=1, pady=2)
+    # Return Button
+    gui.Button(rootFrame, text="Return", bg=gui_bgColor, fg=gui_fgColor, command=item).grid(row=4,
+                                                                                            column=0,
+                                                                                            columnspan=2,
+                                                                                            pady=5)
+    root.mainloop()
+
+
+def freshStarter():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    frm = gui.Frame(root)
+    frm.pack()
+    root.mainloop()
+
+
+def clearFields(a):
+    for i in a:
+        if not (type(i) == gui.StringVar()):
+            i.delete(0, gui.END)
+
+
+def getFields(a):
+    l = []
+    for i in a:
+        if type(i) == gui.StringVar():
+            l.append(i)
+        l.append(i.get())
+    return tuple(l)
+
+
 def peopleAdder():
     global root
     root.destroy()
     root = gui.Tk()
+    root.config(bg=gui_bgColor)
     root.title("People: Adding New Records")
     root.geometry(geometry)
     rootFrame = gui.Frame(root, bg=gui_bgColor)
@@ -277,10 +391,10 @@ def peopleAdder():
         proprietor_val,
         phoneNo_val, mobileNo_val, gstNo_val, dlNo_val)
     gui.Button(rootFrame, text="Add People", command=lambda: (peopleAdder(buttonList), clearFields(buttonList)),
-               bg=gui_bgColor, fg=gui_fgColor)\
+               bg=gui_bgColor, fg=gui_fgColor) \
         .grid(row=14, column=0, pady=2)
     gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor,
-               fg=gui_fgColor)\
+               fg=gui_fgColor) \
         .grid(row=14, column=1, pady=2)
     gui.Button(rootFrame, text="Return", bg=gui_bgColor, fg=gui_fgColor, command=mainPage).grid(row=15,
                                                                                                 column=0,
@@ -292,4 +406,4 @@ def peopleAdder():
 
 
 # main
-startPage()
+mainPage()
