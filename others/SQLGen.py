@@ -44,15 +44,15 @@ def itemFileRunner():
     return True
 
 
-def peopleListRunner(check):
+def invoiceGenRunner(check):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     if not check:
         cur.execute('''
-            CREATE table people (
-                ID int primary key,                                     /*  0   */
-                pName varchar(50),                                      /*  1   */
-                pCategory varchar(1),                                   /*  2   */
+            CREATE table suppcust (
+                FirmID int primary key,                                 /*  0   */
+                SCName varchar(50),                                     /*  1   */
+                SCCategory varchar(1),                                  /*  2   */    /* Supplier or customer (drop down menu) */
                 contactPerson int,                                      /*  3   */
                 address varchar(50),                                    /*  4   */
                 city varchar(50),                                       /*  5   */
@@ -60,8 +60,8 @@ def peopleListRunner(check):
                 proprietor varchar(15),                                 /*  7   */
                 phoneNo int,                                            /*  8   */
                 mobileNo int,                                           /*  9   */
-                gstN int,                                               /* 10   */
-                dlNo int                                                /* 11   */
+                gstN int,                                               /*  10  */
+                dlNo int                                                /*  11  */
             )
         ''')
         con.commit()
@@ -81,7 +81,51 @@ def reset():
     """)
 
 
-reset()
+def invoiceGenRunner(check):
+    con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
+    cur = con.cursor()
+    if not check:
+        cur.execute('''
+            CREATE table invoice (
+                FirmID int,                                               /*  0   */
+                Firmname varchar(50),                                     /*  1   */
+                Billno int,                                               /*  2   */
+                Billdate date,                                            /*  3   */
+                Itemname varchar(50),                                     /*  4   */
+                Itemtype varchar(50),                                     /*  5   */
+                Batchno int,                                              /*  6   */
+                Packing varchar(10),                                      /*  7   */
+                Expdate date,                                             /*  8   */
+                Qty int,                                                  /*  9   */
+                Rate int,                                                 /*  10  */
+                Total int,                                                /*  11  */
+                Transport varchar(50)                                     /*  12  */
+            )
+        ''')
+        con.commit()
+    return True
+
+
+def stockRegRunner(check):
+    con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
+    cur = con.cursor()
+    if not check:
+        cur.execute('''
+            CREATE table StockRegister (
+                Item varchar(50),                                              /*  0   */
+                Itemtype varchar(50),                                          /*  1   */
+                Batchno int,                                                   /*  2   */
+                Packing varchar(50),                                           /*  3   */
+                Expdate date,                                                  /*  4   */
+                Rate int,                                                      /*  5   */
+                Qty int,                                                       /*  6   */
+            )
+        ''')
+        con.commit()
+    return True
+
+# reset()
 # checker()
-itemFileRunner()
-peopleListRunner(False)
+# itemFileRunner()
+# # stockRegRunner(False)
+# invoiceGenRunner(False)

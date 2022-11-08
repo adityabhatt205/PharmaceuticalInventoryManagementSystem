@@ -6,6 +6,7 @@ def authCheck(L):
         return True
     return False
 
+
 #
 # correct = ["root", "root"]
 # incorrect = ["guest", "not root"]
