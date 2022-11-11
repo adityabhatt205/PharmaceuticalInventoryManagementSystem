@@ -89,7 +89,7 @@ def invoiceGenRunner(check):
             CREATE table invoice (
                 FirmID int,                                               /*  0   */
                 FirmName varchar(50),                                     /*  1   */
-                BillNo int,                                               /*  2   */
+                BillNo int primary key,                                   /*  2   */
                 BillDate date,                                            /*  3   */
                 ItemName varchar(50),                                     /*  4   */
                 ItemType varchar(50),                                     /*  5   */
