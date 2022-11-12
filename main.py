@@ -10,6 +10,7 @@ from others.authCheck import *
 from itemFile import *
 from peopleList import *
 import Export_Item
+import csv
 from PIL import ImageTk, Image
 
 # variables
@@ -57,7 +58,7 @@ def startPage():
 
     imageFrame = gui.Frame(root, width=1280, height=720, borderwidth=0)
     imageFrame.grid(column=3, row=0)
-    homeImage = ImageTk.PhotoImage(Image.open(r"C:\Users\adity\Desktop\pyProjectOnPyCharm\others\Assets\HomePic01.jpg"))
+    homeImage = ImageTk.PhotoImage(Image.open(r"others\Assets\HomePic01.jpg"))
     gui.Label(image=homeImage, borderwidth=0).grid(row=0, column=0)
 
     authPage = gui.Toplevel()
@@ -90,7 +91,7 @@ def startPage():
                fg=gui_fgColor2).grid(row=2, column=0, pady=2)
     gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor2,
                fg=gui_fgColor2).grid(row=2, column=1, pady=2)
-    gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor2,
+    gui.Button(authFrame, text="Quit", width=25, command=lambda: (root.quit(), authPage.quit()), bg=gui_bgColor2,
                fg=gui_fgColor2).grid(row=3, column=0, columnspan=2, pady=0)
     authPage.resizable(False, False)
     root.mainloop()
@@ -555,4 +556,4 @@ def searchFirm():
 
 
 # main
-mainPage()
+startPage()

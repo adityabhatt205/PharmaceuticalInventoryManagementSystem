@@ -3,7 +3,7 @@ import mysql.connector as sql
 
 # Global Variables
 sqlUser = "root"
-sqlPass = "root"
+sqlPass = "123456"
 sqlHost = "localhost"
 sql_auth_plugin = "mysql_native_password"
 
@@ -125,8 +125,7 @@ def stockRegRunner(check):
     return True
 
 
-# reset()
-# checker()
-# itemFileRunner()
-# # stockRegRunner(False)
-# invoiceGenRunner(False)
+#checker()
+#itemFileRunner()
+## stockRegRunner(False)
+#invoiceGenRunner(False)

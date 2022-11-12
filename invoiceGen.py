@@ -1,11 +1,17 @@
 # Invoice Generator
 
 # Importing
+import csv
 import mysql.connector as sql
 
 # Global Variables
-sqlUser = "root"
-sqlPass = "root"
+with open(r"others\passwordSQL.csv") as passpicker:
+    kilo = csv.reader(passpicker)
+    l = None
+    for i in kilo:
+        l = i
+    sqlUser = l[0]
+    sqlPass = l[1]
 sqlHost = "localhost"
 sql_auth_plugin = "mysql_native_password"
 
