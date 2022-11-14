@@ -91,9 +91,13 @@ def startPage():
                fg=gui_fgColor2).grid(row=2, column=0, pady=2)
     gui.Button(authFrame, text="Clear Fields", width=25, command=lambda: clearFields(buttonList), bg=gui_bgColor2,
                fg=gui_fgColor2).grid(row=2, column=1, pady=2)
-    gui.Button(authFrame, text="Quit", width=25, command=lambda: (root.quit(), authPage.quit()), bg=gui_bgColor2,
+    gui.Button(authFrame, text="Quit", width=25, command=root.destroy, bg=gui_bgColor2,
                fg=gui_fgColor2).grid(row=3, column=0, columnspan=2, pady=0)
     authPage.resizable(False, False)
+    authPage.wm_attributes('-topmost', True)
+    root.wm_attributes('-disabled', True)
+    authPage.wm_attributes('-toolwindow', True)
+    root.wm_attributes('-toolwindow', True)
     root.mainloop()
     authPage.mainloop()
 
@@ -105,6 +109,11 @@ def incorrectCred(check, page):
     if incorrectAttempts >= 3:
         page.destroy()
     return check, incorrectAttempts
+
+
+def closeMulti(listOfWindows):
+    for containingWindow in listOfWindows:
+        containingWindow.destroy()
 
 
 def mainPage():
@@ -555,5 +564,24 @@ def searchFirm():
     root.mainloop()
 
 
+def purReg():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.config(bg=gui_bgColor)
+    root.title("Pur Reg")
+    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
+    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
+    frm.pack()
+    gui.Label(frm, text="Pur Reg File: Pic k an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0,
+                                                                                                          row=0,
+                                                                                                          columnspan=3)
+    gui.Button(frm, text="Insert", command=insertFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command=searchFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command="", bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=3)
+    root.mainloop()
+
+
 # main
-startPage()
+purReg()
