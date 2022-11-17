@@ -147,7 +147,7 @@ def mainPage():
         grid(column=1, row=1)
     gui.Button(frm, text="3", command=startPage, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=2, row=1)
-    gui.Button(frm, text="4", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
+    gui.Button(frm, text="Purchase Register", command=purReg, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=0, row=2)
     gui.Button(frm, text="5", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=1, row=2)
@@ -242,8 +242,7 @@ def insertItem():
     manufacturingDate_val.grid(row=12, column=1, pady=5)
     buttonList = (
         itemID_val, itemName_val, itemCategory_val_d, company_val, composition_val, stockist_val, retailPrice_val,
-        MRP_val,
-        packing_val, batchNo_val, expiryDate_val, manufacturingDate_val)
+        MRP_val, packing_val, batchNo_val, expiryDate_val, manufacturingDate_val)
     gui.Button(rootFrame, text="Add Item", command=lambda: (itemAdder(getFields(buttonList)), clearFields(buttonList)),
                bg=gui_bgColor, fg=gui_fgColor).grid(
         row=14, column=0, pady=2)
@@ -573,9 +572,27 @@ def purReg():
     root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
     frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
     frm.pack()
-    gui.Label(frm, text="Pur Reg File: Pic k an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0,
-                                                                                                          row=0,
-                                                                                                          columnspan=3)
+    gui.Label(frm, text="Pur Reg File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(column=0,
+                                                                                                         row=0,
+                                                                                                         columnspan=3)
+    gui.Button(frm, text="Insert", command=insertFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
+    gui.Button(frm, text="Search", command=searchFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
+    gui.Button(frm, text="Modify", command="", bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
+    gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=3)
+    root.mainloop()
+
+
+def invoicePage():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.config(bg=gui_bgColor)
+    root.title("Invoice Register")
+    root.geometry(f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}")
+    frm = gui.Frame(root, bg=gui_bgColor, width=root.winfo_screenwidth(), height=root.winfo_screenheight())
+    frm.pack()
+    gui.Label(frm, text="Invoice Register File: Pick an option to continue", bg=gui_bgColor, fg=gui_fgColor).grid(
+        column=0, row=0, columnspan=3)
     gui.Button(frm, text="Insert", command=insertFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
     gui.Button(frm, text="Search", command=searchFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
     gui.Button(frm, text="Modify", command="", bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
@@ -584,4 +601,4 @@ def purReg():
 
 
 # main
-purReg()
+mainPage()

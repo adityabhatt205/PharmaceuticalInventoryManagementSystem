@@ -94,7 +94,7 @@ def insertPurReg():
     gui.Button(rootFrame, text="Return", bg=gui_bgColor2, fg=gui_fgColor2, command=mainPage).grid(row=15,
                                                                                                   column=0,
                                                                                                   columnspan=2,
-                                                                                                  pady=5)
+                                                                                                   pady=5)
     root.resizable(False, False)
     root.mainloop()
 
