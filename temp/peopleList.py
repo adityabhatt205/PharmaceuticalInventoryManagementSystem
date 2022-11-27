@@ -16,10 +16,11 @@ sql_auth_plugin = "mysql_native_password"
 
 # Functions
 # noinspection SqlResolve
-def SCSearch(criteria='SCNo', value='0'):
+def firmSearch(criteria='FirmID', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     value += '%'
+    value = '%' + value
     cur.execute(
         f"""
             SELECT * FROM suppcust
@@ -33,13 +34,12 @@ def SCSearch(criteria='SCNo', value='0'):
 
 
 # noinspection SqlResolve
-def SCAdder(infoList):
+def peopleAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    finalList = infoList
-    finalList[2] = infoList[2][0]
+    print(infoList)
     cur.execute(f"""
-        INSERT INTO suppcust values {tuple(finalList)}
+        INSERT INTO suppcust values {infoList}
     """)
     con.commit()
     results = cur.fetchall()
@@ -49,11 +49,11 @@ def SCAdder(infoList):
 
 
 # noinspection SqlResolve
-def SCDelete(People):
+def peopleDelete(People):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-            DELETE FROM suppcust WHERE FirmID = {People}
+            DELETE FROM suppcust WHERE ID = {People}
         """)
     con.commit()
     results = cur.fetchall()
@@ -62,7 +62,7 @@ def SCDelete(People):
     return results
 
 
-def SCModify(valueSCID):
+def peopleModify(valuePeopleID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     # noinspection SqlResolve
@@ -70,19 +70,19 @@ def SCModify(valueSCID):
         f"""
             UPDATE suppcust
             SET
-                FirmID = {valueSCID[0]},
-                pName = {valueSCID[1]},
-                pCategory = {valueSCID[2]},
-                contactPerson = {valueSCID[3]},
-                address = {valueSCID[4]},
-                city = {valueSCID[5]},
-                pinCode = {valueSCID[6]},
-                proprietor = {valueSCID[7]},
-                phoneNo = {valueSCID[8]},
-                mobileNo = {valueSCID[9]},
-                gstNo = {valueSCID[10]},
-                dlNo = {valueSCID[11]}
-            WHERE ID = {valueSCID[0]}
+                ID = {valuePeopleID[0]},
+                pName = {valuePeopleID[1]},
+                pCategory = {valuePeopleID[2]},
+                contactPerson = {valuePeopleID[3]},
+                address = {valuePeopleID[4]},
+                city = {valuePeopleID[5]},
+                pinCode = {valuePeopleID[6]},
+                proprietor = {valuePeopleID[7]},
+                phoneNo = {valuePeopleID[8]},
+                mobileNo = {valuePeopleID[9]},
+                gstNo = {valuePeopleID[10]},
+                dlNo = {valuePeopleID[11]}
+            WHERE ID = {valuePeopleID[0]}
         """
     )
     cur.commit()

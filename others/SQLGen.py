@@ -1,14 +1,38 @@
 # Importing
 import mysql.connector as sql
+import csv
 
 # Global Variables
-sqlUser = "root"
-sqlPass = "123456"
+with open(r"passwordSQL.csv") as passpicker:
+    kilo = csv.reader(passpicker)
+    l = None
+    for i in kilo:
+        l = i
+    sqlUser = l[0]
+    sqlPass = l[1]
 sqlHost = "localhost"
 sql_auth_plugin = "mysql_native_password"
 
 
 # Functions
+def reset():
+    con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin)
+    cur = con.cursor()
+    if checker():
+        cur.execute("""
+            DROP DATABASE SQL_Project
+        """)
+        con.commit()
+    cur.execute("""
+        CREATE DATABASE SQL_Project
+    """)
+    con.commit()
+    itemMasterFileRunner()
+    SuppCustRunner()
+    invoiceGenRunner()
+    stockRegRunner()
+
+
 def checker():  # -----> if SQL_Project exists: True or False
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin)
     cur = con.cursor()
@@ -16,12 +40,10 @@ def checker():  # -----> if SQL_Project exists: True or False
         cur.execute('''USE SQL_Project''')
         return True
     except sql.errors.ProgrammingError:
-        cur.execute('''CREATE DATABASE SQL_Project''')
-        con.commit()
         return False
 
 
-def itemFileRunner():
+def itemMasterFileRunner():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute('''
@@ -34,98 +56,74 @@ def itemFileRunner():
             stockist decimal(8,2),                                      /*  5   */
             retailPrice decimal(8,2),                                   /*  6   */
             mrp decimal(8,2),                                           /*  7   */
-            packing varchar(10),                                        /*  8   */
-            batchNo int,                                                /*  9   */
-            expiryDate date,                                            /* 10   */
-            manufacturingDate date                                      /* 11   */
+            packing varchar(10)
         )
     ''')
     con.commit()
     return True
 
 
-def firmFileRunner(check):
+def SuppCustRunner():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    if not check:
-        cur.execute('''
-            CREATE table suppcust (
-                FirmID int primary key,                                 /*  0   */
-                SCName varchar(50),                                     /*  1   */
-                SCCategory varchar(1),                                  /*  2   */    /* Supplier or customer*/
-                contactPerson bigint,                                   /*  3   */
-                address varchar(50),                                    /*  4   */
-                city varchar(50),                                       /*  5   */
-                pinCode int,                                            /*  6   */
-                proprietor varchar(15),                                 /*  7   */
-                phoneNo bigint,                                         /*  8   */
-                mobileNo bigint,                                        /*  9   */
-                gstN bigint,                                            /*  10  */
-                dlNo bigint                                             /*  11  */
-            )
-        ''')
-        con.commit()
+    cur.execute('''
+        CREATE table SuppCust (
+            firmID int primary key,                                 /*  0   */
+            SCName varchar(50),                                     /*  1   */
+            SCCategory varchar(1),                                  /*  2   */
+            contactPerson varchar(50),                                      /*  3   */
+            address varchar(50),                                    /*  4   */
+            city varchar(50),                                       /*  5   */
+            pinCode int,                                            /*  6   */
+            proprietor varchar(15),                                 /*  7   */
+            phoneNo varchar(10),                                            /*  8   */
+            mobileNo varchar(10),                                           /*  9   */
+            gstN int,                                               /*  10  */
+            dlNo int                                                /*  11  */
+        )
+    ''')
+    con.commit()
     return True
 
 
-def reset():
-    con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin)
-    cur = con.cursor()
-    if checker():
-        cur.execute("""
-            DROP DATABASE SQL_Project
-        """)
-        con.commit()
-    cur.execute("""
-        CREATE DATABASE SQL_Project
-    """)
-
-
-def invoiceGenRunner(check):
+def invoiceGenRunner():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    if not check:
-        cur.execute('''
-            CREATE table invoice (
-                FirmID int,                                               /*  0   */
-                FirmName varchar(50),                                     /*  1   */
-                BillNo int primary key,                                   /*  2   */
-                BillDate date,                                            /*  3   */
-                ItemName varchar(50),                                     /*  4   */
-                ItemType varchar(50),                                     /*  5   */
-                BatchNo int,                                              /*  6   */
-                Packing varchar(10),                                      /*  7   */
-                expDate date,                                             /*  8   */
-                Qty int,                                                  /*  9   */
-                Rate int,                                                 /*  10  */
-                Total int,                                                /*  11  */
-                Transport varchar(50)                                     /*  12  */
-            )
-        ''')
-        con.commit()
+    cur.execute('''
+        CREATE table invoice (
+            firmID int,                                               /*  0   */
+            firmName varchar(50),                                     /*  1   */
+            billNo int,                                               /*  2   */
+            billDate date,                                            /*  3   */
+            itemName varchar(50),                                     /*  4   */
+            itemType varchar(50),                                     /*  5   */
+            batchNo int,                                              /*  6   */
+            packing varchar(10),                                      /*  7   */
+            expDate date,                                             /*  8   */
+            qty int,                                                  /*  9   */
+            rate int,                                                 /*  10  */
+            total int,                                                /*  11  */
+            transport varchar(50)                                     /*  12  */
+        )
+    ''')
+    con.commit()
     return True
 
 
-def stockRegRunner(check):
+def stockRegRunner():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    if not check:
-        cur.execute('''
-            CREATE table StockRegister (
-                Item varchar(50),                                              /*  0   */
-                Itemtype varchar(50),                                          /*  1   */
-                Batchno int,                                                   /*  2   */
-                Packing varchar(50),                                           /*  3   */
-                Expdate date,                                                  /*  4   */
-                Rate int,                                                      /*  5   */
-                Qty int,                                                       /*  6   */
-            )
-        ''')
-        con.commit()
+    cur.execute('''
+        CREATE table StockRegister (
+            item varchar(50),                                              /*  0   */
+            itemType varchar(50),                                          /*  1   */
+            batchNo int,                                                   /*  2   */
+            packing varchar(50),                                           /*  3   */
+            expDate date,                                                  /*  4   */
+            rate int,                                                      /*  5   */
+            qty int                                                        /*  6   */
+        )
+    ''')
+    con.commit()
     return True
 
-
-#checker()
-#itemFileRunner()
-## stockRegRunner(False)
-#invoiceGenRunner(False)

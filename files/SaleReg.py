@@ -1,10 +1,15 @@
-
 import mysql.connector as sql
 
-sqlUser = "root"
-sqlPass = "leviackerman"
+with open(r"others\passwordSQL.csv") as passpicker:
+    kilo = csv.reader(passpicker)
+    l = None
+    for i in kilo:
+        l = i
+    sqlUser = l[0]
+    sqlPass = l[1]
 sqlHost = "localhost"
 sql_auth_plugin = "mysql_native_password"
+
 
 def AddSaleReg():
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")

@@ -5,24 +5,24 @@ import tkinter as gui
 from tkinter import Frame, filedialog, ttk
 import mysql.connector as sql
 import os
-from others.SQLGen import *
+# from others.SQLGen import *
 from others.authCheck import *
-from itemFile import *
-from peopleList import *
-import Export_Item
+from files.itemFile import *
+from files.SuppCust import *
+# import Export_Item
 import csv
 from PIL import ImageTk, Image
 
 # variables
 mainMessage = "Welcome to the Pharmaceutical Inventory Management System!"
 mainItem = "Item File"
-gui_bgColor = '#262626'
-gui_bgColor2 = '#202121'
-gui_fgColor = '#7a95ff'  # #9999ff
-gui_fgColor2 = '#99e9ff'
-gui_FontStyle = "Palatino"
+gui_bgColor = '#000000'
+gui_bgColor2 = '#020208'
+gui_fgColor = '#ffffff'  # #9999ff
+gui_fgColor2 = '#d9e3fa'
+gui_FontStyle = "NotoSans"
 root = gui.Tk()
-geometry = f"{int(root.winfo_screenwidth() / 2)}x{int(root.winfo_screenheight() / 2)}+" \
+geometry = f"{int(root.winfo_screenwidth())}x{int(root.winfo_screenheight())}+" \
            f"{int(root.winfo_screenwidth() / 4)}+{int(root.winfo_screenheight() / 4)}"
 incorrectAttempts = 0
 
@@ -123,7 +123,7 @@ def mainPage():
     root.config(bg=gui_bgColor)
     root.geometry(geometry)
     frm = gui.Frame(root, bg=gui_bgColor)
-    frm.grid(row=0, column=0)
+    frm.pack()
     root.title("Main Page")
 
     # menu = gui.Menu(root, bg=gui_bgColor, fg=gui_fgColor)
@@ -138,18 +138,18 @@ def mainPage():
     # menu.add_cascade(label='Help', menu=helpMenu)
     # helpMenu.add_command(label='About', command=about)
 
-    gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor, font=(gui_FontStyle, 20)) \
+    gui.Label(frm, text=mainMessage, bg=gui_bgColor, fg=gui_fgColor, font=(gui_FontStyle, 19)) \
         .grid(column=0, row=0, columnspan=3, sticky="s")
 
     gui.Button(frm, text="Item", command=item, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=0, row=1)
-    gui.Button(frm, text="Firm", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
+    gui.Button(frm, text="Supplier/Customer", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=1, row=1)
-    gui.Button(frm, text="3", command=startPage, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
+    gui.Button(frm, text="Sale Register", command=startPage, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=2, row=1)
     gui.Button(frm, text="Purchase Register", command=purReg, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=0, row=2)
-    gui.Button(frm, text="5", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
+    gui.Button(frm, text="Invoice", command=firm, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=1, row=2)
     gui.Button(frm, text="Log Out", command=startPage, bg=gui_bgColor2, fg=gui_fgColor2, width=20). \
         grid(column=2, row=2)
@@ -207,19 +207,12 @@ def insertItem():
                                                                                               sticky="w")
     gui.Label(rootFrame, text="Packing", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=9, column=0,
                                                                                                   sticky="w")
-    gui.Label(rootFrame, text="Batch No.", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=10, column=0,
-                                                                                                    sticky="w")
-    gui.Label(rootFrame, text="Expiry Date", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=11, column=0,
-                                                                                                      sticky="w")
-    gui.Label(rootFrame, text="Manufacturing Date", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=12,
-                                                                                                             column=0,
-                                                                                                             sticky="w")
     itemID_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     itemID_val.grid(row=1, column=1, pady=5)
     itemName_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     itemName_val.grid(row=2, column=1, pady=5)
     itemCategory_val_d = gui.StringVar()
-    itemCategory_val_dropdown = gui.OptionMenu(rootFrame, itemCategory_val_d, "I", "C", "T")
+    itemCategory_val_dropdown = gui.OptionMenu(rootFrame, itemCategory_val_d, "Injection", "Capsule", "Tablet", "Syrup")
     itemCategory_val_dropdown.config(bg=gui_bgColor, fg=gui_fgColor, borderwidth=0, width=15)
     itemCategory_val_dropdown.grid(row=3, column=1, pady=5)
     company_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
@@ -234,16 +227,12 @@ def insertItem():
     MRP_val.grid(row=8, column=1, pady=5)
     packing_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     packing_val.grid(row=9, column=1, pady=5)
-    batchNo_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    batchNo_val.grid(row=10, column=1, pady=5)
-    expiryDate_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    expiryDate_val.grid(row=11, column=1, pady=5)
-    manufacturingDate_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    manufacturingDate_val.grid(row=12, column=1, pady=5)
-    buttonList = (
+    buttonList = [
         itemID_val, itemName_val, itemCategory_val_d, company_val, composition_val, stockist_val, retailPrice_val,
-        MRP_val, packing_val, batchNo_val, expiryDate_val, manufacturingDate_val)
-    gui.Button(rootFrame, text="Add Item", command=lambda: (itemAdder(getFields(buttonList)), clearFields(buttonList)),
+        MRP_val, packing_val
+    ]
+    gui.Button(rootFrame, text="Add Item",
+               command=lambda: (itemAdder(list(getFields(buttonList))), clearFields(buttonList)),
                bg=gui_bgColor, fg=gui_fgColor).grid(
         row=14, column=0, pady=2)
     gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor,
@@ -264,7 +253,7 @@ def searchItemOutput(criteria, value, frame):
     frame.config(bg=gui_bgColor)
     k = 0
     width_list = [
-        3, 25, 2, 25, 50, 15, 15, 15, 15, 10, 20, 20,
+        5, 25, 2, 25, 58, 14, 14, 14, 15, 10, 15, 15
     ]
     orientation_list = [
         "right", "left", "left", "left", "left", "right", "right", "right", "right", "right", "right", "right"
@@ -309,14 +298,16 @@ def searchItem():
     searchValue = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2, width=21)
     searchValue.grid(row=2, column=1, sticky="e")
     # Result
-    resultFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    canvas = gui.Canvas(rootFrame, width="1330")
+    canvas.grid(row=6, column=0, columnspan=4)
+    scroll = gui.Scrollbar(rootFrame, orient=gui.VERTICAL, command=canvas.yview)
+    scroll.grid(row=6, column=5)
+    canvas.configure(yscrollcommand=scroll.set, bg=gui_bgColor)
+    canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    resultFrame = gui.Frame(canvas, bg=gui_bgColor, borderwidth=2)
     resultFrame.grid(row=1, column=0)
+
     searchItemOutput(criteria=itemCriteria, value=searchValue, frame=resultFrame)
-
-    # result = gui.Label(resultFrame, text=str(searchItemOutput(criteria=itemCriteria, value=searchValue,
-    #                                                           frame=resultFrame)), bg=gui_bgColor, fg=gui_fgColor)
-    # result.grid(row=5, column=0, pady=2, columnspan=3)
-
     # Search Button
     gui.Button(rootFrame, text="Search Item", bg=gui_bgColor2, fg=gui_fgColor2,
                command=lambda: searchItemOutput(criteria=itemCriteria, value=searchValue,
@@ -329,6 +320,9 @@ def searchItem():
                                                                                               column=0,
                                                                                               columnspan=2,
                                                                                               pady=5)
+
+    canvas.create_window((0, 0), window=resultFrame, anchor="nw")
+
     root.mainloop()
 
 
@@ -453,7 +447,7 @@ def insertFirm():
     pName_val.grid(row=2, column=1, pady=5)
     pCategory_val_d = gui.StringVar()
     pCategory_val_d.set("C")
-    pCategory_val_dropdown = gui.OptionMenu(rootFrame, pCategory_val_d, "S", "C")
+    pCategory_val_dropdown = gui.OptionMenu(rootFrame, pCategory_val_d, "Supplier", "Customer")
     pCategory_val_dropdown.config(bg=gui_bgColor2, fg=gui_fgColor2, borderwidth=0, width=15)
     pCategory_val_dropdown.grid(row=3, column=1, pady=5)
     contactPerson_val = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2)
@@ -478,7 +472,7 @@ def insertFirm():
         pID_val, pName_val, pCategory_val_d, contactPerson_val, pAddress_val, pCity_val, pinCode_val,
         proprietor_val, phoneNo_val, mobileNo_val, gstNo_val, dlNo_val)
     gui.Button(rootFrame, text="Add People",
-               command=lambda: (peopleAdder(getFields(buttonList)), clearFields(buttonList)),
+               command=lambda: (SCAdder(list(getFields(buttonList))), clearFields(buttonList)),
                bg=gui_bgColor2, fg=gui_fgColor2) \
         .grid(row=14, column=0, pady=2)
     gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields(buttonList), bg=gui_bgColor2,
@@ -495,7 +489,7 @@ def insertFirm():
 def searchFirmOutput(criteria, value, frame):
     for oldResults in frame.winfo_children():
         oldResults.destroy()
-    data = firmSearch(criteria=criteria.get(), value=getFields([value])[0])
+    data = SCSearch(criteria=criteria.get(), value=getFields([value])[0])
     frame.config(bg=gui_bgColor)
     k = 0
     width_list = [
@@ -576,7 +570,7 @@ def purReg():
                                                                                                          row=0,
                                                                                                          columnspan=3)
     gui.Button(frm, text="Insert", command=insertFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=0, row=1)
-    gui.Button(frm, text="Search", command=searchFirm, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
+    gui.Button(frm, text="Search", command=searchPurReg, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=1)
     gui.Button(frm, text="Modify", command="", bg=gui_bgColor2, fg=gui_fgColor2).grid(column=2, row=1)
     gui.Button(frm, text="Return", command=mainPage, bg=gui_bgColor2, fg=gui_fgColor2).grid(column=1, row=3)
     root.mainloop()
@@ -600,5 +594,77 @@ def invoicePage():
     root.mainloop()
 
 
+def searchPurRegOutput(criteria, value, frame):
+    for oldResults in frame.winfo_children():
+        oldResults.destroy()
+    data = SCSearch(criteria=criteria.get(), value=getFields([value])[0])
+    frame.config(bg=gui_bgColor)
+    k = 0
+    width_list = [
+        30, 5, 20, 30, 3, 20, 20, 20
+    ]
+    orientation_list = [
+        "right", "left", "left", "left", "left", "right", "right", "right", "right", "right", "right", "right"
+    ]
+    for i in range(len(data)):
+        for j in range(len(data[i])):
+            e = gui.Entry(frame)
+            e.config(bg=gui_bgColor2, fg=gui_fgColor2, width=width_list[j], justify=orientation_list[j])
+            e.grid(row=i, column=j, sticky="w")
+            e.insert(k, data[i][j])
+            k += 1
+
+
+def searchPurReg():
+    global root
+    root.destroy()
+    root = gui.Tk()
+    root.title("PurReg: Searching Records")
+    root.config(bg=gui_bgColor)
+    root.geometry(f"{1350}x{int(root.winfo_screenheight() / 2)}+"
+                  f"{int((root.winfo_screenwidth() / 2) - 1350 / 2)}+{int(root.winfo_screenheight() / 4)}")
+    root.resizable(False, False)
+    rootFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    rootFrame.grid(row=0, column=0)
+    gui.Label(rootFrame, text="Search Records", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=0,
+                                                                                                         column=0,
+                                                                                                         columnspan=3,
+                                                                                                         padx=100)
+    gui.Label(rootFrame, text="Field To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=1,
+                                                                                                          column=0,
+                                                                                                          sticky="w")
+    gui.Label(rootFrame, text="Value To Search", font=gui_FontStyle, bg=gui_bgColor, fg=gui_fgColor).grid(row=2,
+                                                                                                          column=0,
+                                                                                                          sticky="w")
+    itemCriteria = gui.StringVar()
+    itemCriteria.set("Billno")
+    op = gui.OptionMenu(rootFrame, itemCriteria, "SCName", "Billno", "Billdate", "Itemname", "Itemtype",
+                        "Rate", "Qty", "Total")
+    op.config(width=15, height=1, bg=gui_bgColor, fg=gui_fgColor, borderwidth=0)
+    op.grid(row=1, column=1, sticky="e")
+    searchValue = gui.Entry(rootFrame, bg=gui_bgColor2, fg=gui_fgColor2, width=21)
+    searchValue.grid(row=2, column=1, sticky="e")
+
+    # Result
+    resultFrame = gui.Frame(root, bg=gui_bgColor, borderwidth=2)
+    resultFrame.grid(row=1, column=0)
+    searchPurRegOutput(criteria=itemCriteria, value=searchValue, frame=resultFrame)
+
+    # Search Button
+    gui.Button(rootFrame, text="Search Item", bg=gui_bgColor2, fg=gui_fgColor2,
+               command=lambda: searchFirmOutput(criteria=itemCriteria, value=searchValue,
+                                                frame=resultFrame)).grid(row=3, column=0, pady=2)
+    # Clear Button
+    gui.Button(rootFrame, text="Clear Fields", command=lambda: clearFields([searchValue]), bg=gui_bgColor2,
+               fg=gui_fgColor2).grid(row=3, column=1, pady=2)
+    # Return Button
+    gui.Button(rootFrame, text="Return", bg=gui_bgColor2, fg=gui_fgColor2, command=item).grid(row=4,
+                                                                                              column=0,
+                                                                                              columnspan=2,
+                                                                                              pady=5)
+    root.mainloop()
+
+
 # main
-mainPage()
+if __name__ == "__main__":
+    mainPage()

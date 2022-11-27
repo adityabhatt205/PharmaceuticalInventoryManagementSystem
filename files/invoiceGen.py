@@ -9,6 +9,7 @@ sqlPass = "leviackerman"
 sqlHost = "localhost"
 sql_auth_plugin = "mysql_native_password"
 
+
 # Functions
 # noinspection SqlResolve
 def invoiceSearch(criteria='FirmID', value='0'):
@@ -53,6 +54,7 @@ def invoiceDelete(firm):
     cur.close()
     con.close()
     return results
+
 
 def invoiceModify(valueFirmID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")

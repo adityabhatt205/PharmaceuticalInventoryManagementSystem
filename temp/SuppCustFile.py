@@ -1,6 +1,6 @@
 # Importing
-import mysql.connector as sql
 import csv
+import mysql.connector as sql
 
 # Global Variables
 with open(r"others\passwordSQL.csv") as passpicker:
@@ -23,7 +23,7 @@ def SCSearch(criteria='SCNo', value='0'):
     cur.execute(
         f"""
             SELECT * FROM suppcust
-            WHERE {criteria} LIKE '{value}'
+            WHERE {criteria} LIKE {value}
         """
     )
     results = cur.fetchall()
@@ -36,10 +36,8 @@ def SCSearch(criteria='SCNo', value='0'):
 def SCAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    finalList = infoList
-    finalList[2] = infoList[2][0]
     cur.execute(f"""
-        INSERT INTO suppcust values {tuple(finalList)}
+        INSERT INTO suppcust values ({infoList})
     """)
     con.commit()
     results = cur.fetchall()

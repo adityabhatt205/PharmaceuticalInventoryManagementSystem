@@ -1,6 +1,6 @@
 # Importing
-import mysql.connector as sql
 import csv
+import mysql.connector as sql
 
 # Global Variables
 with open(r"others\passwordSQL.csv") as passpicker:
@@ -16,13 +16,14 @@ sql_auth_plugin = "mysql_native_password"
 
 # Functions
 # noinspection SqlResolve
-def SCSearch(criteria='SCNo', value='0'):
+def itemSearch(criteria='itemNo', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     value += '%'
+    value = '%' + value
     cur.execute(
         f"""
-            SELECT * FROM suppcust
+            SELECT * FROM item
             WHERE {criteria} LIKE '{value}'
         """
     )
@@ -33,27 +34,25 @@ def SCSearch(criteria='SCNo', value='0'):
 
 
 # noinspection SqlResolve
-def SCAdder(infoList):
+def itemAdder(infoList):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     finalList = infoList
     finalList[2] = infoList[2][0]
     cur.execute(f"""
-        INSERT INTO suppcust values {tuple(finalList)}
+        INSERT INTO item values {tuple(finalList)}
     """)
     con.commit()
-    results = cur.fetchall()
     cur.close()
     con.close()
-    return results
 
 
 # noinspection SqlResolve
-def SCDelete(People):
+def itemDelete(valueItemID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
     cur.execute(f"""
-            DELETE FROM suppcust WHERE FirmID = {People}
+            DELETE FROM item WHERE itemID = {valueItemID}
         """)
     con.commit()
     results = cur.fetchall()
@@ -62,27 +61,27 @@ def SCDelete(People):
     return results
 
 
-def SCModify(valueSCID):
+# noinspection SqlResolve
+def itemModify(valueItemID):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
-    # noinspection SqlResolve
     cur.execute(
         f"""
-            UPDATE suppcust
+            UPDATE item
             SET
-                FirmID = {valueSCID[0]},
-                pName = {valueSCID[1]},
-                pCategory = {valueSCID[2]},
-                contactPerson = {valueSCID[3]},
-                address = {valueSCID[4]},
-                city = {valueSCID[5]},
-                pinCode = {valueSCID[6]},
-                proprietor = {valueSCID[7]},
-                phoneNo = {valueSCID[8]},
-                mobileNo = {valueSCID[9]},
-                gstNo = {valueSCID[10]},
-                dlNo = {valueSCID[11]}
-            WHERE ID = {valueSCID[0]}
+                itemID = {valueItemID[0]},
+                itemName = {valueItemID[1]},
+                itemCategory = {valueItemID[2]},
+                company = {valueItemID[3]},
+                composition = {valueItemID[4]},
+                rate = {valueItemID[5]},
+                retailPrice = {valueItemID[6]},
+                mrp = {valueItemID[7]},
+                packing = {valueItemID[8]},
+                batchNo = {valueItemID[9]},
+                expiryDate = {valueItemID[10]},
+                manufacturingDate = {valueItemID[11]}
+            WHERE itemID = {valueItemID[0]}
         """
     )
     cur.commit()
@@ -90,3 +89,18 @@ def SCModify(valueSCID):
     cur.close()
     con.close()
     return results
+
+
+# itemAdder((
+#     12,  # itemID
+#     "Meds",  # itemName
+#     "C",  # itemCategory
+#     "TheCompany",  # company
+#     "Something",  # composition
+#     10.0,  # stockist
+#     12.0,  # retailPrice
+#     12.0,  # mrp
+#     886275,  # packing
+#     888289,  # batchNo
+#     "20220808",  # expiryDate
+#     "20220808"))  # manufacturingDate
