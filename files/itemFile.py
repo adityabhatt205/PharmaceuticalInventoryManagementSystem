@@ -19,6 +19,7 @@ sql_auth_plugin = "mysql_native_password"
 def itemSearch(criteria='itemNo', value='0'):
     con = sql.connect(host=sqlHost, user=sqlUser, passwd=sqlPass, auth_plugin=sql_auth_plugin, database="SQL_Project")
     cur = con.cursor()
+    value = str(value)
     value += '%'
     value = '%' + value
     cur.execute(
