@@ -72,14 +72,14 @@ def SuppCustRunner():
             SCName varchar(50),                                     /*  1   */
             SCCategory varchar(1),                                  /*  2   */
             contactPerson varchar(50),                                      /*  3   */
-            address varchar(50),                                    /*  4   */
+            address varchar(100),                                    /*  4   */
             city varchar(50),                                       /*  5   */
             pinCode int,                                            /*  6   */
             proprietor varchar(15),                                 /*  7   */
             phoneNo varchar(10),                                            /*  8   */
             mobileNo varchar(10),                                           /*  9   */
-            gstN int,                                               /*  10  */
-            dlNo int                                                /*  11  */
+            gstN varchar(15),                                               /*  10  */
+            dlNo varchar(20)                                                /*  11  */
         )
     ''')
     con.commit()

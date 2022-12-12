@@ -21,6 +21,7 @@ gui_bgColor2 = '#a6ab9a'  # #020208
 gui_fgColor = '#0c0e8a'  # #ffffff
 gui_fgColor2 = '#0c298a'  # #d9e3fa
 gui_FontStyle = "NotoSans"
+resultSet = []
 root = gui.Tk()
 geometry = f"{int(root.winfo_screenwidth())}x{int(root.winfo_screenheight())}+" \
            f"{int(root.winfo_screenwidth() / 4)}+{int(root.winfo_screenheight() / 4)}"
@@ -32,7 +33,7 @@ TotalLabel = None
 # functions
 def clearFields(a):
     for i in a:
-        if type(i) != gui.StringVar:
+        if type(i) != gui.StringVar and not i.widgetName == 'custID_val':
             i.delete(0, gui.END)
 
 
@@ -719,10 +720,10 @@ def invoicePage():
     # Entry Boxes
     itemID_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     itemID_val.grid(row=1, column=1, pady=5)
-    custID_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
-    custID_val.grid(row=2, column=1, pady=5)
-    mfdDate_val = gui.Entry(root, bg=gui_bgColor, fg=gui_fgColor)
-    mfdDate_val.grid(row=0, column=1, pady=5)
+    custID_val = gui.Entry(root, bg=gui_bgColor, fg=gui_fgColor)
+    custID_val.grid(row=0, column=1, pady=5)
+    mfdDate_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
+    mfdDate_val.grid(row=3, column=1, pady=5)
     expDate_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
     expDate_val.grid(row=4, column=1, pady=5)
     discPer_val = gui.Entry(rootFrame, bg=gui_bgColor, fg=gui_fgColor)
@@ -798,11 +799,10 @@ def invoicePage():
               fg=gui_fgColor).grid(row=0, column=0, padx=0)
 
     gui.Button(invoiceControlFrame, text="Generate Invoice", bg=gui_bgColor2, fg=gui_fgColor2,
-               command=lambda: searchItemOutput(criteria=itemCriteria, value=searchValue,
-                                                frame=resultFrame)).grid(row=1, column=0, pady=2)
+               command=lambda: invoiceGenerate(resultSet, canvas)).grid(row=1, column=0, pady=2)
 
     # Clear Button
-    gui.Button(invoiceControlFrame, text="Return", command=mainPage, bg=gui_bgColor2,
+    gui.Button(invoiceControlFrame, text="Return", command=lambda: (mainPage(), invoiceReturn()), bg=gui_bgColor2,
                fg=gui_fgColor2).grid(row=1, column=1, pady=2)
 
     # mainloop
@@ -812,13 +812,24 @@ def invoicePage():
 row = 0
 
 
+def invoiceReturn():
+    global sum
+    sum = 0
+    pass
+
+
+def invoiceGenerate(data, canvas):
+    for oldResults in canvas.winfo_children():
+        oldResults.destroy()
+    invoiceMaker(data)
+
+
 def invoiceMaker(data):
     # Initializing Invoice
     k = os.scandir('invoice')
     invoiceName = 0
     for i in k:
         invoiceName = i.name[0:-4]
-        print(invoiceName)
     invoiceName = str(int(invoiceName) + 1)
     while True:
         if len(invoiceName) < 5:
@@ -828,6 +839,7 @@ def invoiceMaker(data):
     invoiceFile = open(f'invoice\\{invoiceName}.csv', 'a', newline="\n")
     invoiceFileWriter = csv.writer(invoiceFile)
     invoiceFileWriter.writerows(data)
+    invoiceFile.close()
 
 
 def invoiceItemOutput(data, frame, invoiceControlFrame):
@@ -845,9 +857,8 @@ def invoiceItemOutput(data, frame, invoiceControlFrame):
     results = cur.fetchall()
     cur.close()
     con.close()
-    print(results)
     results = results[0]
-    print(results)
+    global resultSet
     final_data = [row + 1, results[1], results[2], results[3], data[2], data[3], data[4], data[5],
                   float((1 - (float(data[4]) / 100))
                         * float(results[6])), float((1 - (float(data[4]) / 100)) * float(results[6])) * float(data[5])]
@@ -856,6 +867,7 @@ def invoiceItemOutput(data, frame, invoiceControlFrame):
     width_list = [
         3, 30, 3, 30, 15, 15, 15, 15, 15, 15, 15, 15, 15
     ]
+    resultSet.append(final_data)
     orientation_list = [
         "right", "left", "left", "left", "left", "right", "right", "right", "right", "right", "right", "right"
     ]
@@ -867,19 +879,18 @@ def invoiceItemOutput(data, frame, invoiceControlFrame):
         k += 1
     row += 1
     global sum
+    sum = 0
     sum += float((1 - (float(data[4]) / 100)) * float(results[6])) * float(data[5])
     global TotalLabel
     gui.Label(invoiceControlFrame, text=f"Total: {sum}", font=gui_FontStyle, bg=gui_bgColor,
-              fg=gui_fgColor).grid(row=0,
-                                   column=0,
-                                   padx=0)
+              fg=gui_fgColor).grid(row=0, column=0, padx=0)
     return final_data
 
 
-def priceUpdater():
-    pass
+# def priceUpdater():
+#     pass
 
 
 # main
 if __name__ == "__main__":
-    invoicePage()
+    startPage()
